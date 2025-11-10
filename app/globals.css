@@ -1,0 +1,179 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color palette for Everything Auto - warm off-white bg, bold red accents, dark navy text, deep blue headers */
+  --background: #fcfbf7;
+  --foreground: #071418;
+  --card: #ffffff;
+  --card-foreground: #071418;
+  --popover: #ffffff;
+  --popover-foreground: #071418;
+  --primary: #08396b;
+  --primary-foreground: #fcfbf7;
+  --secondary: #ae2215;
+  --secondary-foreground: #fcfbf7;
+  --muted: #e8e6e1;
+  --muted-foreground: #6b6b6b;
+  --accent: #ae2215;
+  --accent-foreground: #ffffff;
+  --destructive: #ae2215;
+  --destructive-foreground: #ffffff;
+  --border: #e8e6e1;
+  --input: #f5f3f0;
+  --ring: #08396b;
+  --chart-1: #08396b;
+  --chart-2: #ae2215;
+  --chart-3: #6b6b6b;
+  --chart-4: #e8e6e1;
+  --chart-5: #fcfbf7;
+  --radius: 0.625rem;
+  --sidebar: #08396b;
+  --sidebar-foreground: #fcfbf7;
+  --sidebar-primary: #ae2215;
+  --sidebar-primary-foreground: #fcfbf7;
+  --sidebar-accent: #ae2215;
+  --sidebar-accent-foreground: #fcfbf7;
+  --sidebar-border: #1a5a9f;
+  --sidebar-ring: #ae2215;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fcfbf7;
+  --card: #1a1a1a;
+  --card-foreground: #fcfbf7;
+  --popover: #1a1a1a;
+  --popover-foreground: #fcfbf7;
+  --primary: #1a5a9f;
+  --primary-foreground: #fcfbf7;
+  --secondary: #ff6b47;
+  --secondary-foreground: #0a0a0a;
+  --muted: #333333;
+  --muted-foreground: #b0b0b0;
+  --accent: #ff6b47;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ff6b47;
+  --destructive-foreground: #0a0a0a;
+  --border: #333333;
+  --input: #2a2a2a;
+  --ring: #ff6b47;
+  --sidebar: #071418;
+  --sidebar-foreground: #fcfbf7;
+  --sidebar-primary: #ff6b47;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #ff6b47;
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #333333;
+  --sidebar-ring: #ff6b47;
+}
+
+@theme inline {
+  --font-sans: "Inter", "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add custom animations */
+@keyframes spin-smooth {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-spin-smooth {
+  animation: spin-smooth 2s linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
