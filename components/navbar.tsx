@@ -3,11 +3,19 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogOut } from "lucide-react"
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const isAuth = localStorage.getItem("adminAuth") === "true"
+    setIsAdminAuthenticated(isAuth)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +25,11 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminAuth")
+    setIsAdminAuthenticated(false)
+  }
 
   const navLinks = [
     { label: "Home", href: "/" },
