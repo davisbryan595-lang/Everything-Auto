@@ -1,15 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { useBookingStore } from "@/lib/store"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-
-const timeSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
+import { ChevronLeft, ChevronRight, AlertCircle } from "lucide-react"
+import {
+  getAvailableTimeSlots,
+  formatDateForStorage,
+  isDateDisabled,
+} from "@/lib/availability"
 
 export function Step2DateTime() {
-  const { selectedDate, selectedTime, setDate, setTime } = useBookingStore()
+  const { selectedDate, selectedTime, selectedServices, setDate, setTime, appointments } = useBookingStore()
   const [currentMonth, setCurrentMonth] = useState(new Date())
+
+  const totalDuration = useMemo(() => {
+    return selectedServices.reduce((acc, s) => acc + s.duration, 0)
+  }, [selectedServices])
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -22,17 +29,12 @@ export function Step2DateTime() {
   const handleDateClick = (day: number) => {
     const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     setDate(newDate)
+    setTime("")
   }
 
   const days = Array.from({ length: getDaysInMonth(currentMonth) }, (_, i) => i + 1)
   const firstDay = getFirstDayOfMonth(currentMonth)
   const emptyDays = Array.from({ length: firstDay }, (_, i) => i)
-
-  const isDateValid = (date: Date) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return date >= today
-  }
 
   const isDateSelected = (day: number) => {
     if (!selectedDate) return false
@@ -42,6 +44,14 @@ export function Step2DateTime() {
       selectedDate.getFullYear() === currentMonth.getFullYear()
     )
   }
+
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) return []
+    const dateStr = formatDateForStorage(selectedDate)
+    return getAvailableTimeSlots(dateStr, totalDuration, appointments)
+  }, [selectedDate, totalDuration, appointments])
+
+  const hasAvailableSlots = availableTimeSlots.length > 0
 
   return (
     <div className="space-y-8">
@@ -85,23 +95,22 @@ export function Step2DateTime() {
             ))}
             {days.map((day) => {
               const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-              const valid = isDateValid(date)
+              const disabled = isDateDisabled(date)
               const selected = isDateSelected(day)
-              const isWeekend = date.getDay() === 0 || date.getDay() === 6
 
               return (
                 <motion.button
                   key={day}
-                  onClick={() => valid && handleDateClick(day)}
-                  disabled={!valid}
-                  whileHover={valid ? { scale: 1.1 } : {}}
-                  whileTap={valid ? { scale: 0.95 } : {}}
+                  onClick={() => !disabled && handleDateClick(day)}
+                  disabled={disabled}
+                  whileHover={!disabled ? { scale: 1.1 } : {}}
+                  whileTap={!disabled ? { scale: 0.95 } : {}}
                   className={`p-2 rounded text-sm font-medium transition-all ${
                     selected
                       ? "bg-secondary text-white"
-                      : valid
-                        ? `${isWeekend ? "bg-muted" : "bg-card"} hover:bg-primary/10`
-                        : "opacity-30 cursor-not-allowed"
+                      : disabled
+                        ? "bg-muted opacity-30 cursor-not-allowed"
+                        : "bg-card hover:bg-primary/10"
                   }`}
                 >
                   {day}
@@ -110,29 +119,51 @@ export function Step2DateTime() {
             })}
           </div>
         </div>
+
+        <div className="text-xs text-muted-foreground text-center">
+          Sundays are closed. Bookings available Mon-Sat, 8AM-6PM
+        </div>
       </div>
 
       {/* Time Slots */}
       {selectedDate && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <h3 className="font-bold text-foreground">Select Time (Mon-Sat, 8AM-6PM)</h3>
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-            {timeSlots.map((time) => (
-              <motion.button
-                key={time}
-                onClick={() => setTime(time)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`p-3 rounded-lg font-semibold transition-all ${
-                  selectedTime === time
-                    ? "bg-secondary text-white shadow-lg"
-                    : "bg-card border border-border hover:border-secondary"
-                }`}
-              >
-                {time}
-              </motion.button>
-            ))}
+          <div>
+            <h3 className="font-bold text-foreground">Select Time</h3>
+            <p className="text-sm text-muted-foreground">
+              Need {totalDuration} hour{totalDuration !== 1 ? "s" : ""} for your services
+            </p>
           </div>
+
+          {!hasAvailableSlots ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-amber-900">No availability</p>
+                <p className="text-sm text-amber-800 mt-1">
+                  There are no {totalDuration}-hour blocks available on this date. Please choose another date.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+              {availableTimeSlots.map((time) => (
+                <motion.button
+                  key={time}
+                  onClick={() => setTime(time)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`p-3 rounded-lg font-semibold transition-all ${
+                    selectedTime === time
+                      ? "bg-secondary text-white shadow-lg"
+                      : "bg-card border border-border hover:border-secondary"
+                  }`}
+                >
+                  {time}
+                </motion.button>
+              ))}
+            </div>
+          )}
         </motion.div>
       )}
     </div>
