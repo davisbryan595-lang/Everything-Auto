@@ -1,17 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AdminLogin } from "@/components/admin/admin-login"
-import { BookingsCalendar } from "@/components/admin/bookings-calendar"
-import { BookingsTable } from "@/components/admin/bookings-table"
+import { AdminAppointmentManager } from "@/components/admin/admin-appointment-manager"
+import { useBookingStore } from "@/lib/store"
 import { Calendar, BarChart3, Users, TrendingUp } from "lucide-react"
+import { formatDateForStorage } from "@/lib/availability"
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { appointments } = useBookingStore()
 
   useEffect(() => {
     setMounted(true)
@@ -27,6 +29,38 @@ export default function AdminPage() {
     localStorage.removeItem("adminAuth")
     setIsAuthenticated(false)
   }
+
+  const stats = useMemo(() => {
+    const today = formatDateForStorage(new Date())
+    const todayAppointments = appointments.filter((apt) => apt.date === today && apt.status !== "cancelled")
+
+    const weekStart = new Date()
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
+
+    const thisWeekAppointments = appointments.filter((apt) => {
+      const aptDate = new Date(apt.date)
+      return aptDate >= weekStart && aptDate <= weekEnd && apt.status !== "cancelled"
+    })
+
+    const totalClients = new Set(appointments.map((apt) => apt.clientName)).size
+    const confirmedAppointments = appointments.filter((apt) => apt.status === "confirmed").length
+    const totalAppointments = appointments.filter((apt) => apt.status !== "cancelled").length
+    const completionRate = totalAppointments > 0 ? Math.round((confirmedAppointments / totalAppointments) * 100) : 0
+
+    const totalRevenue = appointments
+      .filter((apt) => apt.status !== "cancelled")
+      .reduce((acc, apt) => acc + apt.totalPrice, 0)
+
+    return {
+      todayCount: todayAppointments.length,
+      weekCount: thisWeekAppointments.length,
+      totalClients,
+      completionRate,
+      weekRevenue: totalRevenue,
+    }
+  }, [appointments])
 
   if (!mounted) return null
 
@@ -47,7 +81,7 @@ export default function AdminPage() {
           >
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground">Admin Dashboard</h1>
-              <p className="text-muted-foreground mt-2">Manage bookings and view analytics</p>
+              <p className="text-muted-foreground mt-2">Manage appointments and view analytics</p>
             </div>
             <button
               onClick={handleLogout}
@@ -60,10 +94,10 @@ export default function AdminPage() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             {[
-              { icon: Calendar, label: "Today's Bookings", value: "2", color: "from-primary to-primary/80" },
-              { icon: TrendingUp, label: "This Week", value: "12", color: "from-secondary to-secondary/80" },
-              { icon: Users, label: "Total Clients", value: "487", color: "from-blue-500 to-blue-600" },
-              { icon: BarChart3, label: "Completion Rate", value: "96%", color: "from-green-500 to-green-600" },
+              { icon: Calendar, label: "Today's Appointments", value: stats.todayCount, color: "from-primary to-primary/80" },
+              { icon: TrendingUp, label: "This Week", value: stats.weekCount, color: "from-secondary to-secondary/80" },
+              { icon: Users, label: "Total Clients", value: stats.totalClients, color: "from-blue-500 to-blue-600" },
+              { icon: BarChart3, label: "Completion Rate", value: `${stats.completionRate}%`, color: "from-green-500 to-green-600" },
             ].map((stat, index) => {
               const Icon = stat.icon
               return (
@@ -84,51 +118,13 @@ export default function AdminPage() {
             })}
           </div>
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Calendar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="lg:col-span-2"
-            >
-              <BookingsCalendar />
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-card border border-border rounded-lg p-6 h-fit"
-            >
-              <h3 className="font-bold text-foreground mb-4">Quick Stats</h3>
-              <div className="space-y-4">
-                <div className="bg-background rounded-lg p-4">
-                  <p className="text-xs text-muted-foreground mb-1">Pending Approvals</p>
-                  <p className="text-2xl font-bold text-secondary">3</p>
-                </div>
-                <div className="bg-background rounded-lg p-4">
-                  <p className="text-xs text-muted-foreground mb-1">Confirmed Today</p>
-                  <p className="text-2xl font-bold text-primary">8</p>
-                </div>
-                <div className="bg-background rounded-lg p-4">
-                  <p className="text-xs text-muted-foreground mb-1">Revenue This Week</p>
-                  <p className="text-2xl font-bold text-green-600">$2,450</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Bookings Table */}
+          {/* Appointment Manager */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-12"
           >
-            <BookingsTable />
+            <AdminAppointmentManager />
           </motion.div>
         </div>
       </div>
