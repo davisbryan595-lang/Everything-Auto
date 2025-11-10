@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Menu, X, LogOut } from "lucide-react"
 
 export function Navbar() {
+  const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
@@ -29,6 +31,7 @@ export function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("adminAuth")
     setIsAdminAuthenticated(false)
+    router.push("/")
   }
 
   const navLinks = [
