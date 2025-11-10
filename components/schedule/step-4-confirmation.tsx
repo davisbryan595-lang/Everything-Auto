@@ -1,19 +1,64 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { useBookingStore } from "@/lib/store"
 import { CheckCircle2, Calendar, Clock, User, Car } from "lucide-react"
 import Confetti from "react-confetti"
 import { useWindowSize } from "react-use"
+import { formatDateForStorage, calculateEndTime } from "@/lib/availability"
 
 export function Step4Confirmation() {
-  const { selectedServices, selectedDate, selectedTime, clientName, clientPhone, vehicleMake, vehicleModel } =
-    useBookingStore()
+  const {
+    selectedServices,
+    selectedDate,
+    selectedTime,
+    clientName,
+    clientPhone,
+    vehicleMake,
+    vehicleModel,
+    notes,
+    createAppointment,
+    resetBooking,
+  } = useBookingStore()
   const { width, height } = useWindowSize()
+  const [bookingId, setBookingId] = useState("")
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const id = Math.random().toString(36).substr(2, 9).toUpperCase()
+    setBookingId(id)
+
+    if (!saved && selectedDate && selectedTime) {
+      const totalDuration = selectedServices.reduce((acc, s) => acc + s.duration, 0)
+      const endTime = calculateEndTime(selectedTime, totalDuration)
+      const dateStr = formatDateForStorage(selectedDate)
+
+      const appointment = {
+        id,
+        date: dateStr,
+        time: selectedTime,
+        endTime,
+        serviceIds: selectedServices.map((s) => s.id),
+        serviceNames: selectedServices.map((s) => s.name),
+        clientName,
+        clientPhone,
+        vehicleMake,
+        vehicleModel,
+        notes,
+        status: "confirmed" as const,
+        totalDuration,
+        totalPrice: selectedServices.reduce((acc, s) => acc + s.price, 0),
+        createdAt: new Date().toISOString(),
+      }
+
+      createAppointment(appointment)
+      setSaved(true)
+    }
+  }, [selectedDate, selectedTime, clientName])
 
   const totalPrice = selectedServices.reduce((acc, s) => acc + s.price, 0)
   const totalDuration = selectedServices.reduce((acc, s) => acc + s.duration, 0)
-  const bookingId = Math.random().toString(36).substr(2, 9).toUpperCase()
 
   return (
     <motion.div
