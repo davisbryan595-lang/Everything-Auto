@@ -2,12 +2,22 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogOut } from "lucide-react"
 
 export function Navbar() {
+  const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const isAuth = localStorage.getItem("adminAuth") === "true"
+    setIsAdminAuthenticated(isAuth)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +27,12 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminAuth")
+    setIsAdminAuthenticated(false)
+    router.push("/")
+  }
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -40,10 +56,15 @@ export function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <img
+              <motion.img
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo_new-removebg-preview-hvoIVNsOQvinPtqIy6FmMRMYUxrEI3.png"
                 alt="Everything Auto Logo"
-                className="h-12 w-auto"
+                className="h-12 w-auto transition-all duration-300"
+                whileHover={{
+                  filter: "drop-shadow(0 0 16px rgba(174, 34, 21, 0.7))",
+                  scale: 1.08,
+                }}
+                transition={{ duration: 0.3 }}
               />
             </Link>
 
@@ -60,8 +81,24 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* Desktop CTA Button */}
-            <div className="hidden md:block">
+            {/* Desktop CTA Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              {mounted && isAdminAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2.5 text-foreground font-semibold hover:text-secondary transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/admin"
+                  className="px-4 py-2.5 text-foreground font-semibold hover:text-secondary transition-colors"
+                >
+                  Login
+                </Link>
+              )}
               <Link
                 href="/schedule"
                 className="px-6 py-2.5 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary/90 transition-all hover:shadow-lg"
@@ -106,6 +143,26 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {mounted && isAdminAuthenticated ? (
+              <button
+                onClick={() => {
+                  handleLogout()
+                  setMobileMenuOpen(false)
+                }}
+                className="flex items-center justify-center gap-2 w-full px-6 py-2.5 text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full px-6 py-2.5 text-center text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
+              >
+                Login
+              </Link>
+            )}
             <Link
               href="/schedule"
               onClick={() => setMobileMenuOpen(false)}

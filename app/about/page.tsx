@@ -131,9 +131,9 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { name: "Miguel Rodriguez", role: "Master Technician", specialization: "Engine & Transmission" },
-                { name: "Carlos Santos", role: "Senior Technician", specialization: "Brakes & Suspension" },
-                { name: "Juan Martinez", role: "Lead Technician", specialization: "Electrical Systems" },
+                { name: "Miguel Rodriguez", role: "Master Technician", specialization: "Engine & Transmission", image: "/car-cooling-system.jpg" },
+                { name: "Carlos Santos", role: "Senior Technician", specialization: "Brakes & Suspension", image: "/car-brake-system.png" },
+                { name: "Juan Martinez", role: "Lead Technician", specialization: "Electrical Systems", image: "/spark-plugs-installation.jpg" },
               ].map((member, index) => (
                 <motion.div
                   key={index}
@@ -142,7 +142,13 @@ export default function AboutPage() {
                   transition={{ delay: index * 0.1 }}
                   className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow border border-border"
                 >
-                  <div className="h-40 bg-gradient-to-br from-primary to-secondary" />
+                  <div className="h-48 overflow-hidden bg-muted">
+                    <img
+                      src={member.image}
+                      alt={`${member.name} - ${member.role}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="p-6 text-center">
                     <h3 className="font-bold text-foreground text-lg mb-1">{member.name}</h3>
                     <p className="text-secondary font-semibold text-sm mb-2">{member.role}</p>

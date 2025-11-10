@@ -14,7 +14,7 @@ const mainServices = [
     description: "Replace cabin and engine filters for optimal performance and air quality",
     duration: 1,
     price: 45,
-    image: "/placeholder.svg?key=759pi",
+    image: "/car-air-filter-replacement.jpg",
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const mainServices = [
     description: "Complete fluid replacement for smooth steering control and responsiveness",
     duration: 2,
     price: 89,
-    image: "/placeholder.svg?key=0eqir",
+    image: "/power-steering-system.jpg",
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const mainServices = [
     description: "Essential maintenance for safe braking performance and system health",
     duration: 2,
     price: 79,
-    image: "/placeholder.svg?key=s2pa8",
+    image: "/car-brake-system.png",
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ const mainServices = [
     description: "Keep your engine running at optimal temperature with fresh coolant",
     duration: 2,
     price: 69,
-    image: "/placeholder.svg?key=fiopr",
+    image: "/car-cooling-system.jpg",
   },
   {
     id: 5,
@@ -46,7 +46,7 @@ const mainServices = [
     description: "New spark plugs for smooth engine ignition and fuel efficiency",
     duration: 3,
     price: 99,
-    image: "/placeholder.svg?key=qu0fx",
+    image: "/spark-plugs-installation.jpg",
   },
   {
     id: 6,
@@ -54,7 +54,7 @@ const mainServices = [
     description: "Regular oil changes for engine longevity and optimal performance",
     duration: 2,
     price: 59,
-    image: "/placeholder.svg?key=yopol",
+    image: "/car-oil-change.png",
   },
 ]
 
