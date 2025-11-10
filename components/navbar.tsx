@@ -135,6 +135,26 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {mounted && isAdminAuthenticated ? (
+              <button
+                onClick={() => {
+                  handleLogout()
+                  setMobileMenuOpen(false)
+                }}
+                className="flex items-center justify-center gap-2 w-full px-6 py-2.5 text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full px-6 py-2.5 text-center text-foreground font-semibold rounded-lg hover:bg-muted transition-all"
+              >
+                Login
+              </Link>
+            )}
             <Link
               href="/schedule"
               onClick={() => setMobileMenuOpen(false)}
