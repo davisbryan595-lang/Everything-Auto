@@ -59,13 +59,10 @@ export function Navbar() {
               <motion.img
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo_new-removebg-preview-hvoIVNsOQvinPtqIy6FmMRMYUxrEI3.png"
                 alt="Everything Auto Logo"
-                className="h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
-                style={{
-                  filter: "drop-shadow(0 0 0 transparent)",
-                }}
+                className="h-12 w-auto transition-all duration-300"
                 whileHover={{
-                  filter: "drop-shadow(0 0 12px rgba(var(--color-secondary), 0.6))",
-                  scale: 1.05,
+                  filter: "drop-shadow(0 0 16px rgba(174, 34, 21, 0.7))",
+                  scale: 1.08,
                 }}
                 transition={{ duration: 0.3 }}
               />
