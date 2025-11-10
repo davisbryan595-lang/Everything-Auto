@@ -102,7 +102,13 @@ export function Step4Confirmation() {
             <Calendar className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs opacity-75">Date</p>
-              <p className="font-semibold">{selectedDate?.toLocaleDateString()}</p>
+              <p className="font-semibold">
+                {selectedDate
+                  ? selectedDate instanceof Date
+                    ? selectedDate.toLocaleDateString()
+                    : new Date(selectedDate).toLocaleDateString()
+                  : "Not selected"}
+              </p>
             </div>
           </div>
 

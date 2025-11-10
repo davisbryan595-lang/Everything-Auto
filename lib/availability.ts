@@ -21,7 +21,10 @@ export function addHours(date: Date, hours: number): Date {
   return result
 }
 
-export function formatDateForStorage(date: Date): string {
+export function formatDateForStorage(date: Date | string): string {
+  if (typeof date === "string") {
+    return date
+  }
   return date.toISOString().split("T")[0]
 }
 
