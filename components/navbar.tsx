@@ -56,10 +56,18 @@ export function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <img
+              <motion.img
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo_new-removebg-preview-hvoIVNsOQvinPtqIy6FmMRMYUxrEI3.png"
                 alt="Everything Auto Logo"
-                className="h-12 w-auto"
+                className="h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
+                style={{
+                  filter: "drop-shadow(0 0 0 transparent)",
+                }}
+                whileHover={{
+                  filter: "drop-shadow(0 0 12px rgba(var(--color-secondary), 0.6))",
+                  scale: 1.05,
+                }}
+                transition={{ duration: 0.3 }}
               />
             </Link>
 
