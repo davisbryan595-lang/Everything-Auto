@@ -37,7 +37,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-lg sm:text-xl text-white/90 mb-4 max-w-2xl mx-auto"
         >
-          Fast, Reliable Service for Every Ride
+          Performed At Your Home - No Travel Fee
         </motion.p>
 
         <motion.div
