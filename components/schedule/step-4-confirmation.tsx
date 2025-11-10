@@ -60,6 +60,10 @@ export function Step4Confirmation() {
   const totalPrice = selectedServices.reduce((acc, s) => acc + s.price, 0)
   const totalDuration = selectedServices.reduce((acc, s) => acc + s.duration, 0)
 
+  const handleNewBooking = () => {
+    resetBooking()
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -166,6 +170,15 @@ export function Step4Confirmation() {
           <span className="font-semibold">425-346-8851</span> to reschedule if needed.
         </p>
       </div>
+
+      <motion.button
+        onClick={handleNewBooking}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="w-full px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary/90 transition-all"
+      >
+        Make Another Booking
+      </motion.button>
     </motion.div>
   )
 }
