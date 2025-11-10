@@ -73,8 +73,24 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* Desktop CTA Button */}
-            <div className="hidden md:block">
+            {/* Desktop CTA Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              {mounted && isAdminAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2.5 text-foreground font-semibold hover:text-secondary transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/admin"
+                  className="px-4 py-2.5 text-foreground font-semibold hover:text-secondary transition-colors"
+                >
+                  Login
+                </Link>
+              )}
               <Link
                 href="/schedule"
                 className="px-6 py-2.5 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary/90 transition-all hover:shadow-lg"
